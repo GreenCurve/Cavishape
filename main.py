@@ -36,6 +36,7 @@ class Operation(object):
         if settings == '':
             settings = 'settings.txt'
         #dockingRepeats = int(input('Кол во докингов: '))
+        os.changeDir(dirPath)
         try:
             shutil.copy(dirPath + '\\input\\settings\\' + settings, dirPath + '\\workbench\\' + settings)
             shutil.copy(dirPath + '\\input\\structures\\' + protein, dirPath + '\\workbench\\' + protein)
@@ -150,3 +151,69 @@ class Operation(object):
                     os.rename(dirPath + '\\workbench\\' + files, out + '\\primary\\' + files)
                 except OSError:
                     os.rename(dirPath + '\\workbench\\' + files, out + '\\primary\\' + files + 'OhNO')
+
+    def Extracting(protein, settings):
+        dirPath = r'C:\Users\Egor\Repo'
+        try:
+            os.makedirs(dirPath + r'\workbench')
+        except FileExistsError:
+            pass
+        try:
+            os.makedirs(dirPath + r'\input\structures')
+        except FileExistsError:
+            pass
+        try:
+            os.makedirs(dirPath + r'\input\ligands')
+        except FileExistsError:
+            pass
+        try:
+            os.makedirs(dirPath + r'\input\settings')
+        except FileExistsError:
+            pass
+        try:
+            os.makedirs(dirPath + r'\output')
+        except FileExistsError:
+            pass
+        try:
+            os.makedirs(dirPath + r'\output')
+        except FileExistsError:
+            pass
+
+        # protein = input('Ввод белка для докинга: ')
+        if protein == '':
+            protein = '1dwb.pdb'
+        if settings == '':
+            settings = 'settings.txt'
+        try:
+            shutil.copy(dirPath + '\\input\\settings\\' + settings, dirPath + '\\workbench\\' + settings)
+            shutil.copy(dirPath + '\\input\\structures\\' + protein, dirPath + '\\workbench\\' + protein)
+            os.chdir(dirPath + '\\workbench')
+            command1 = 'build_model -set ' + 'settings.txt' + ' -f ' + protein + ' -olog ' + protein[:-4] + '.log -oref ' + protein[:-4] + '-rfLi.pdb -olig ligandSelf-' + protein[:-4] + '.mol -omm ' + protein[:-4] + '-sb.pdb -pH 7'
+            subprocess.run(command1)
+            g = 1
+            k = 1
+            try:
+                os.makedirs(dirPath + '\\output\\' + protein[:-4] + ' ' + ' Ref')
+                out = dirPath + '\\output\\' + protein[:-4] + ' ' + ' Ref'
+            except FileExistsError:
+                while g == 1:
+                    try:
+                        os.makedirs(dirPath + '\\output\\' + protein[:-4] + ' ' + ' Ref' + ' ' + str(k))
+                        out = dirPath + '\\output\\' + protein[:-4] + ' ' + ' Ref' + ' ' + str(k)
+                    except:
+                        k += 1
+                    else:
+                        break
+            os.chdir(dirPath)
+            os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-rfLi.pdb',out + '\\' + protein[:-4] + '-rfLi.pdb')
+            os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-sb.pdb', out + '\\' + protein[:-4] + '-sb.pdb')
+            os.rename(dirPath + '\\workbench\\' + 'ligandSelf-' + protein[:-4] + '.mol', out + '\\' + 'ligandSelf-' + protein[:-4] + '.mol')
+        except Exception:
+            print('Alarm')
+        finally:
+            for files in os.listdir(dirPath + '\\workbench'):
+                path = os.path.join(dirPath + '\\workbench', files)
+                try:
+                    shutil.rmtree(path)
+                except OSError:
+                    os.remove(path)
