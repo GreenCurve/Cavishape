@@ -5,8 +5,9 @@ import shutil
 import configparser
 
 class Operation(object):
+    global dirPath
+    dirPath = r'C:\Users\Egor\Repo'
     def Docking(protein, ligand, water, settings, dockingRepeats):
-        dirPath = r'C:\Users\Egor\Repo'
         try:
             os.makedirs(dirPath + r'\workbench')
         except FileExistsError: pass
@@ -142,7 +143,6 @@ class Operation(object):
                     os.rename(dirPath + '\\workbench\\' + files, out + '\\primary\\' + files + 'OhNO')
 
     def Extracting(protein, settings):
-        dirPath = r'C:\Users\Egor\Repo'
         try:
             os.makedirs(dirPath + r'\workbench')
         except FileExistsError:
