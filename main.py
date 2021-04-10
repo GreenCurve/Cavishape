@@ -2,6 +2,7 @@ import os
 import subprocess
 import csv
 import shutil
+import configparser
 
 class Operation(object):
     def Docking(protein, ligand, water, settings, dockingRepeats):
@@ -24,19 +25,7 @@ class Operation(object):
         try:
             os.makedirs(dirPath + r'\output')
         except FileExistsError: pass
-
-        #protein = input('Ввод белка для докинга: ')
-        if protein == '':
-            protein = '1dwb.pdb'
-        #ligand = input('Ввод лиганда для докинга: ')
-        if ligand == '':
-            ligand = 'ligandSelf.mol'
-        #water = input('Ввод колеблющейся воды: ')
-        #settings = input("Введите настройки: ")
-        if settings == '':
-            settings = 'settings.txt'
-        #dockingRepeats = int(input('Кол во докингов: '))
-        os.changeDir(dirPath)
+        os.chdir(dirPath)
         try:
             shutil.copy(dirPath + '\\input\\settings\\' + settings, dirPath + '\\workbench\\' + settings)
             shutil.copy(dirPath + '\\input\\structures\\' + protein, dirPath + '\\workbench\\' + protein)
@@ -124,18 +113,18 @@ class Operation(object):
                     writer.writerows(grids)
                 if i == dockingRepeats:
                     os.chdir(dirPath)
-                    os.rename(dirPath + '\\workbench\\gridmap.bin', out + '\\primary\\gridmap.bin'  )
+                    os.rename(dirPath + '\\workbench\\gridmap.bin', out + '\\primary\\gridmap.bin.bin'  )
                     try:
-                        os.rename(dirPath + '\\workbench\\ligandSelf.mol', out + '\\primary\\ligandSelf.mol' )
+                        os.rename(dirPath + '\\workbench\\ligandSelf.mol', out + '\\primary\\ligandSelf.mol.mol' )
                     except FileNotFoundError: pass
-                    os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-rfLi.pdb', out + '\\primary\\' + protein[:-4] + '-rfLi.pdb')
-                    os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-sb.pdb', out + '\\primary\\'+ protein[:-4] + '-sb.pdb')
+                    os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-rfLi.pdb', out + '\\primary\\' + protein[:-4] + '-rfLi.pdb.pdb')
+                    os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-sb.pdb', out + '\\primary\\'+ protein[:-4] + '-sb.pdb.pdb')
                 else:
                     os.remove(dirPath + "\\workbench\\gridmap.bin")
                 os.chdir(dirPath)
-                os.rename(dirPath + '\\workbench\\report.log', out + '\\secondary\\report-' + str(i) + '.log')
-                os.rename(dirPath + '\\workbench\\ligand_docked.pdb', out + '\\secondary\\ligand_docked-' + str(i) + '.pdb')
-                os.rename(dirPath + '\\workbench\\ligandEnergy.csv', out + '\\secondary\\docking_energy-' + str(i) + '.csv')
+                os.rename(dirPath + '\\workbench\\report.log', out + '\\secondary\\report-' + str(i) + '.log.log')
+                os.rename(dirPath + '\\workbench\\ligand_docked.pdb', out + '\\secondary\\ligand_docked-' + str(i) + '.pdb.pdb')
+                os.rename(dirPath + '\\workbench\\ligandEnergy.csv', out + '\\secondary\\docking_energy-' + str(i) + '.csv.csv')
 
             with open(out + '\\primary\\Summary.csv','a') as file:
                     writer = csv.writer(file)
@@ -148,7 +137,7 @@ class Operation(object):
             for files in os.listdir(dirPath + '\\workbench'):
                 path = os.path.join(dirPath + '\\workbench', files)
                 try:
-                    os.rename(dirPath + '\\workbench\\' + files, out + '\\primary\\' + files)
+                    os.rename(dirPath + '\\workbench\\' + files, out + '\\primary\\' + files + files[-4:])
                 except OSError:
                     os.rename(dirPath + '\\workbench\\' + files, out + '\\primary\\' + files + 'OhNO')
 
@@ -178,12 +167,6 @@ class Operation(object):
             os.makedirs(dirPath + r'\output')
         except FileExistsError:
             pass
-
-        # protein = input('Ввод белка для докинга: ')
-        if protein == '':
-            protein = '1dwb.pdb'
-        if settings == '':
-            settings = 'settings.txt'
         try:
             shutil.copy(dirPath + '\\input\\settings\\' + settings, dirPath + '\\workbench\\' + settings)
             shutil.copy(dirPath + '\\input\\structures\\' + protein, dirPath + '\\workbench\\' + protein)
@@ -205,9 +188,9 @@ class Operation(object):
                     else:
                         break
             os.chdir(dirPath)
-            os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-rfLi.pdb',out + '\\' + protein[:-4] + '-rfLi.pdb')
-            os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-sb.pdb', out + '\\' + protein[:-4] + '-sb.pdb')
-            os.rename(dirPath + '\\workbench\\' + 'ligandSelf-' + protein[:-4] + '.mol', out + '\\' + 'ligandSelf-' + protein[:-4] + '.mol')
+            os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-rfLi.pdb',out + '\\' + protein[:-4] + '-rfLi.pdb.pdb')
+            os.rename(dirPath + '\\workbench\\' + protein[:-4] + '-sb.pdb', out + '\\' + protein[:-4] + '-sb.pdb.pdb')
+            os.rename(dirPath + '\\workbench\\' + 'ligandSelf-' + protein[:-4] + '.mol', out + '\\' + 'ligandSelf-' + protein[:-4] + '.mol.mol')
         except Exception:
             print('Alarm')
         finally:
