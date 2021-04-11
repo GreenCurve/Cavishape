@@ -5,7 +5,7 @@ import shutil
 import operator
 from main import *
 
-option = int(input('Выберите ключ для операции из предложенного списка' + '\n' + '0 - Докинг' + '\n' + '1 - экстракция '))
+option = int(input('Выберите ключ для операции из предложенного списка' + '\n' + '0 - Докинг' + '\n' + '1 - экстракция ' + '\n' + '2 - шоткаты '))
 if option == 0:
     protein = input('Ввод белка для докинга: ')
     ligand = input('Ввод лиганда для докинга: ')
@@ -30,3 +30,7 @@ elif option == 1:
     if settings == '':
         settings = 'settings.txt'
     Operation.Extracting(protein, settings)
+elif option == 2:
+    key = input('Введите ключ ')
+    value = input('Введите новое значение ')
+    Operation.Sets(key,value)
