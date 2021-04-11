@@ -33,7 +33,7 @@ class Operation(object):
             try:
                 shutil.copy(dirPath + '\\input\\ligands\\' + ligand, dirPath + '\\workbench\\' + ligand)
             except FileNotFoundError: pass
-            command1 = 'build_model -set ' + 'settings.txt' + ' -f '+ protein + ' -olog '+ protein[:-4] + '.log -oref ' + protein[:-4] + '-rfLi.pdb -olig ligandSelf.mol -omm ' + protein[:-4] + '-sb.pdb -pH 7'
+            command1 = 'build_model -set ' + settings + ' -f '+ protein + ' -olog '+ protein[:-4] + '.log -oref ' + protein[:-4] + '-rfLi.pdb -olig ligandSelf.mol -omm ' + protein[:-4] + '-sb.pdb -pH 7'
             command2 = 'leadfinder -grid -og gridmap.bin -mm ' + protein[:-4] + '-sb.pdb -lr ' + protein[:-4] + '-rfLi.pdb ' + ('-fw ' + water if water != '' else '') + ' -xp'
             command3 = 'leadfinder -g gridmap.bin -mm ' + protein[:-4] + '-sb.pdb -li ' + ligand[:-4] + ' -l report.log -o ligand_docked.pdb -lr ' + protein[:-4] + '-rfLi.pdb -os ligandEnergy.csv -xp'
             SummaryMap = []
@@ -171,7 +171,7 @@ class Operation(object):
             shutil.copy(dirPath + '\\input\\settings\\' + settings, dirPath + '\\workbench\\' + settings)
             shutil.copy(dirPath + '\\input\\structures\\' + protein, dirPath + '\\workbench\\' + protein)
             os.chdir(dirPath + '\\workbench')
-            command1 = 'build_model -set ' + 'settings.txt' + ' -f ' + protein + ' -olog ' + protein[:-4] + '.log -oref ' + protein[:-4] + '-rfLi.pdb -olig ligandSelf-' + protein[:-4] + '.mol -omm ' + protein[:-4] + '-sb.pdb -pH 7'
+            command1 = 'build_model -set ' + settings + ' -f ' + protein + ' -olog ' + protein[:-4] + '.log -oref ' + protein[:-4] + '-rfLi.pdb -olig ligandSelf-' + protein[:-4] + '.mol -omm ' + protein[:-4] + '-sb.pdb -pH 7'
             subprocess.run(command1)
             g = 1
             k = 1
