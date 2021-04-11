@@ -2,11 +2,19 @@ import os
 import subprocess
 import csv
 import shutil
+import json
 import configparser
 
 class Operation(object):
     global dirPath
     dirPath = r'C:\Users\Egor\Repo'
+    def Sets(key,value):
+        conf = {}
+        with open('config.json', 'r') as file:
+            conf = json.load(file)
+        conf[key] = value
+        with open('config.json','w') as file:
+            file.write(json.dumps(conf))
     def Docking(protein, ligand, water, settings, dockingRepeats):
         try:
             os.makedirs(dirPath + r'\workbench')
