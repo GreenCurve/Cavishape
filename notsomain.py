@@ -34,5 +34,8 @@ elif option == 1:
     Operation.Extracting(protein, settings)
 elif option == 2:
     key = input("Введите ключ из предложенного списка " + str(Operation.lsr("config.json")) + " ")
-    value = input("Текующее значение - " + str(Operation.Bmg(key)) + '\n' + "Введите новое значение (Если текущее значение вас устраивает,нажмите ENTER) ")
-    Operation.Sets(key,value)
+    value = input("Текующее значение - " + str(Operation.Bmg(key)) + " " + str(type(Operation.Bmg(key))) + '\n' + "Введите новое значение (Если текущее значение вас устраивает,напишите Феликсу) ")
+    if value == "Феликсу":
+        pass
+    else:
+        Operation.Sets(key,value)
