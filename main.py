@@ -6,8 +6,9 @@ import json
 import configparser
 
 class Operation(object):
+
     global dirPath
-    dirPath = r'C:\Users\Egor\Repo'
+    dirPath = 1
     def Sets(key,value):
         conf = {}
         with open('config.json', 'r') as file:
@@ -15,6 +16,20 @@ class Operation(object):
         conf[key] = value
         with open('config.json','w') as file:
             file.write(json.dumps(conf))
+    def Bmg(trg):
+        with open('config.json', 'r') as file:
+            conf1 = {}
+            conf1 = json.load(file)
+            return conf1[trg]
+    def lsr(self):
+        with open('config.json', 'r') as file:
+            conf2 = {}
+            conf2 = json.load(file)
+            notconf = []
+            for key in conf2:
+                notconf.append(key)
+            return notconf
+    dirPath = Bmg(dirPath)
     def Docking(protein, ligand, water, settings, dockingRepeats):
         try:
             os.makedirs(dirPath + r'\workbench')
