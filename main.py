@@ -91,8 +91,8 @@ class Operation(object):
             except FileExistsError:
                 while g == 1:
                     try:
-                        os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != '' else '-') + ' ' + (reference[:-4] if reference != '-' else '-') + ' ' +  str(k))
-                        out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != '' else '-') + ' ' + (reference[:-4] if reference != '-' else '-') + ' ' +  str(k)
+                        os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != '' else '-') + ' ' + (reference[:-4] if reference != '' else '-') + ' ' +  str(k))
+                        out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != '' else '-') + ' ' + (reference[:-4] if reference != '' else '-') + ' ' +  str(k)
                     except:
                         k += 1
                     else: break
