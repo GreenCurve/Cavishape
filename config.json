@@ -1,1 +1,1 @@
-{"structure": "1dwb.pdb", "ligand": "ligandSelf.mol", "reference": "1dwb-rfL.pdb", "protein": "1dwb-s.pdb", "settings": "settings.txt", "dockingRepeats": "2", "water": "", "dirPath": "C:\\Users\\Egor\\Repo"}
+{"structure": "1dwb.pdb", "ligand": "ligandSelf.mol", "reference": "reference.pdb", "protein": "protein.pdb", "settings": "settings.txt", "dockingRepeats": "2", "water": "", "dirPath": "C:\\Users\\Egor\\Repo"}

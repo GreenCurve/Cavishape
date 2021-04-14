@@ -74,25 +74,29 @@ class Operation(object):
         try:
             shutil.copy(dirPath + '\\input\\settings\\' + settings, dirPath + '\\workbench\\' + settings)
             shutil.copy(dirPath + '\\input\\structures\\' + structure, dirPath + '\\workbench\\' + structure)
-            shutil.copy(dirPath + '\\input\\references\\' + reference, dirPath + '\\workbench\\' + reference)
-            shutil.copy(dirPath + '\\input\\proteins\\' + protein, dirPath + '\\workbench\\' + protein)
+            try:
+                shutil.copy(dirPath + '\\input\\references\\' + reference, dirPath + '\\workbench\\' + reference)
+            except FileNotFoundError: pass
+            try:
+                shutil.copy(dirPath + '\\input\\proteins\\' + protein, dirPath + '\\workbench\\' + protein)
+            except FileNotFoundError: pass
             try:
                 shutil.copy(dirPath + '\\input\\ligands\\' + ligand, dirPath + '\\workbench\\' + ligand)
             except FileNotFoundError: pass
-            command1 = 'build_model -set ' + settings + ' -f '+ structure + ' -olog '+ structure[:-4] + '.log -oref ' + structure[:-4] + '-rfLi.pdb' ' -olig ligandSelf.mol -omm ' + structure[:-4] + '-sb.pdb -pH 7'
-            command2 = 'leadfinder -grid -og gridmap.bin -mm ' + (structure[:-4] + '-sb.pdb' if protein == '' else protein) + ' -lr ' + (structure[:-4] + '-rfLi.pdb' if reference == "" else reference) + ' ' + ('-fw ' + water if water != '' else '') + ' -xp'
-            command3 = 'leadfinder -g gridmap.bin -mm ' + (structure[:-4] + '-sb.pdb' if protein == '' else protein) + ' -li ' + ligand[:-4] + ' -l report.log -o ligand_docked.pdb -lr ' + (structure[:-4] + '-rfLi.pdb' if reference == "" else reference)  + ' -os ligandEnergy.csv -xp'
+            command1 = 'build_model -set ' + settings + ' -f '+ structure + ' -olog '+ structure[:-4] + '.log -oref reference.pdb' ' -olig ligandSelf.mol -omm protein.pdb -pH 7'
+            command2 = 'leadfinder -grid -og gridmap.bin -mm ' + protein + ' -lr ' + reference+ ' ' + ('-fw ' + water if water != '' else '') + ' -xp'
+            command3 = 'leadfinder -g gridmap.bin -mm ' + protein + ' -li ' + ligand + ' -l report.log -o ligand_docked.pdb -lr ' + reference  + ' -os ligandEnergy.csv -xp'
             SummaryMap = []
             k = 1
             g = 1
             try:
-                os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != '' else '-') + ' ' + (reference[:-4] if reference != '' else '-'))
-                out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != '' else '-') + ' ' + (reference[:-4] if reference != '' else '-')
+                os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (reference[:-4] if reference != 'reference.pdb' else '-'))
+                out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (reference[:-4] if reference != 'reference.pdb' else '-')
             except FileExistsError:
                 while g == 1:
                     try:
-                        os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != '' else '-') + ' ' + (reference[:-4] if reference != '-' else '-') + ' ' +  str(k))
-                        out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != '' else '-') + ' ' + (reference[:-4] if reference != '-' else '-') + ' ' +  str(k)
+                        os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (reference[:-4] if reference != 'reference.pdb' else '-') + ' ' +  str(k))
+                        out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (reference[:-4] if reference != 'reference.pdb' else '-') + ' ' +  str(k)
                     except:
                         k += 1
                     else: break
@@ -147,8 +151,8 @@ class Operation(object):
                     try:
                         os.rename(dirPath + '\\workbench\\ligandSelf.mol', out + '\\primary\\ligandSelf.mol' )
                     except FileNotFoundError: pass
-                    os.rename(dirPath + '\\workbench\\' + (structure[:-4] + '-rfLi.pdb' if reference == "" else reference), out + '\\primary\\' + (structure[:-4] + '-rfLi.pdb' if reference == "" else reference))
-                    os.rename(dirPath + '\\workbench\\' + (structure[:-4] + '-sb.pdb' if protein == '' else protein), out + '\\primary\\'+ (structure[:-4] + '-sb.pdb' if protein == '' else protein))
+                    os.rename(dirPath + '\\workbench\\' + reference, out + '\\primary\\' + reference)
+                    os.rename(dirPath + '\\workbench\\' + protein, out + '\\primary\\'+ protein)
 
                 else:
                     os.remove(dirPath + "\\workbench\\gridmap.bin")
@@ -165,10 +169,10 @@ class Operation(object):
         finally:
             if ligand != 'ligandSelf.mol':
                 os.remove(dirPath + '\\workbench\\LigandSelf.mol')
-            if reference != "":
-                os.remove(dirPath + '\\workbench\\' + structure[:-4] + '-rfLi.pdb')
-            if protein != "":
-                os.remove(dirPath + '\\workbench\\' + structure[:-4] + '-sb.pdb')
+            if reference != "reference.pdb":
+                os.remove(dirPath + '\\workbench\\' + 'reference.pdb')
+            if protein != "protein.pdb":
+                os.remove(dirPath + '\\workbench\\' + 'protein.pdb')
             for files in os.listdir(dirPath + '\\workbench'):
                 path = os.path.join(dirPath + '\\workbench', files)
                 try:
