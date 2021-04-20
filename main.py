@@ -45,6 +45,58 @@ class Operation(object):
                             break
                         dlmtrPos += 1
         return values
+    def outputter(structure, ligand, reference, protein):
+        k = 1
+        g = 1
+        try:
+            os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (
+                protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (
+                            reference[:-4] if reference != 'reference.pdb' else '-'))
+            out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (
+                protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (
+                      reference[:-4] if reference != 'reference.pdb' else '-')
+        except FileExistsError:
+            while g == 1:
+                try:
+                    os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (
+                        protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (
+                                    reference[:-4] if reference != 'reference.pdb' else '-') + ' ' + str(k))
+                    out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (
+                        protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (
+                              reference[:-4] if reference != 'reference.pdb' else '-') + ' ' + str(k)
+                except:
+                    k += 1
+                else:
+                    break
+        return out
+    def matrixer(grids, substr):
+        global SummaryMap
+        SummaryMap = []
+        count = 0
+        for count in range(len(Operation.getColumnValues('dG, kcal/mol'))):
+            subgrid = []
+            subgrid.append(str(count))
+            subgrid.append(Operation.getColumnValues('dG, kcal/mol')[count])
+            subgrid.append(Operation.getColumnValues('RMS, A')[count])
+            grids.append(subgrid)
+        count = 0
+        with open('report.log', 'rt') as file:
+            for line in file:
+                if count < len(Operation.getColumnValues('dG, kcal/mol')) and line.find(substr) != -1:
+                    grids[count + 1].append(line[:-1] if line.find(substr) != -1 else '')
+                    check = False
+                    for index in range(len(SummaryMap)):
+                        if SummaryMap[index][0] == line:
+                            SummaryMap[index][1] += float(Operation.getColumnValues('dG, kcal/mol')[count])
+                            SummaryMap[index][2] += 1
+                            check = True
+                    if not check:
+                        appendLine = []
+                        appendLine.append(line)
+                        appendLine.append(float(Operation.getColumnValues('dG, kcal/mol')[count]))
+                        appendLine.append(1)
+                        SummaryMap.append(appendLine)
+                    count += 1
     def Docking(structure, ligand, reference, protein, water, settings, dockingRepeats):
         try:
             os.makedirs(dirPath + r'\workbench')
@@ -86,20 +138,9 @@ class Operation(object):
             command1 = 'build_model -set ' + settings + ' -f '+ structure + ' -olog '+ structure[:-4] + '.log -oref reference.pdb' ' -olig ligandSelf.mol -omm protein.pdb -pH 7'
             command2 = 'leadfinder -grid -og gridmap.bin -mm ' + protein + ' -lr ' + reference+ ' ' + ('-fw ' + water if water != '' else '') + ' -xp'
             command3 = 'leadfinder -g gridmap.bin -mm ' + protein + ' -li ' + ligand + ' -l report.log -o ligand_docked.pdb -lr ' + reference  + ' -os ligandEnergy.csv -xp'
-            SummaryMap = []
             k = 1
             g = 1
-            try:
-                os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (reference[:-4] if reference != 'reference.pdb' else '-'))
-                out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (reference[:-4] if reference != 'reference.pdb' else '-')
-            except FileExistsError:
-                while g == 1:
-                    try:
-                        os.makedirs(dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (reference[:-4] if reference != 'reference.pdb' else '-') + ' ' +  str(k))
-                        out = dirPath + '\\output\\' + structure[:-4] + ' ' + ligand[:-4] + ' ' + (protein[:-4] if protein != 'protein.pdb' else '-') + ' ' + (reference[:-4] if reference != 'reference.pdb' else '-') + ' ' +  str(k)
-                    except:
-                        k += 1
-                    else: break
+            out = Operation.outputter(structure, ligand, reference, protein)
             os.chdir(dirPath + '\\workbench')
             subprocess.run(command1)
             for i in range(dockingRepeats):
@@ -109,31 +150,7 @@ class Operation(object):
 
                 grids = [['Poses' + ', report N' + str(i), 'dG, kcal/mol', 'RMS, A', 'Grid Type']]
                 substr = 'Grid'
-                count = 0
-                for count in range(len(Operation.getColumnValues('dG, kcal/mol'))):
-                    subgrid = []
-                    subgrid.append(str(count))
-                    subgrid.append(Operation.getColumnValues('dG, kcal/mol')[count])
-                    subgrid.append(Operation.getColumnValues('RMS, A')[count])
-                    grids.append(subgrid)
-                count = 0
-                with open('report.log', 'rt') as file:
-                    for line in file:
-                        if count < len(Operation.getColumnValues('dG, kcal/mol')) and line.find(substr) != -1:
-                            grids[count+1].append(line[:-1] if line.find(substr) != -1 else '')
-                            check = False
-                            for index in range(len(SummaryMap)):
-                                if SummaryMap[index][0] == line:
-                                    SummaryMap[index][1] += float(Operation.getColumnValues('dG, kcal/mol')[count])
-                                    SummaryMap[index][2] += 1
-                                    check = True
-                            if not check:
-                                appendLine = []
-                                appendLine.append(line)
-                                appendLine.append(float(Operation.getColumnValues('dG, kcal/mol')[count]))
-                                appendLine.append(1)
-                                SummaryMap.append(appendLine)
-                            count += 1
+                Operation.matrixer(grids, substr)
                 try:
                     os.makedirs(out + r'\primary')
                 except FileExistsError:
