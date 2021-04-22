@@ -28,6 +28,29 @@ class Operation(object):
             conf1 = json.load(file)
         return conf1[key]
     dirPath = str(Bmg("dirPath"))
+    def Initer(Path):
+        try:
+            os.makedirs(dirPath + r'\workbench')
+        except FileExistsError: pass
+        try:
+            os.makedirs(dirPath + r'\input\structures')
+        except FileExistsError: pass
+        try:
+            os.makedirs(dirPath + r'\input\ligands')
+        except FileExistsError: pass
+        try:
+            os.makedirs(dirPath + r'\input\references')
+        except FileExistsError: pass
+        try:
+            os.makedirs(dirPath + r'\input\proteins')
+        except FileExistsError: pass
+        try:
+            os.makedirs(dirPath + r'\input\settings')
+        except FileExistsError: pass
+        try:
+            os.makedirs(dirPath + r'\output')
+        except FileExistsError: pass
+
     def getColumnValues(columnTitle):
         with open('ligandEnergy.csv', newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -98,30 +121,7 @@ class Operation(object):
                         SummaryMap.append(appendLine)
                     count += 1
     def Docking(structure, ligand, reference, protein, water, settings, dockingRepeats):
-        try:
-            os.makedirs(dirPath + r'\workbench')
-        except FileExistsError: pass
-        try:
-            os.makedirs(dirPath + r'\input\structures')
-        except FileExistsError: pass
-        try:
-            os.makedirs(dirPath + r'\input\ligands')
-        except FileExistsError: pass
-        try:
-            os.makedirs(dirPath + r'\input\references')
-        except FileExistsError: pass
-        try:
-            os.makedirs(dirPath + r'\input\proteins')
-        except FileExistsError: pass
-        try:
-            os.makedirs(dirPath + r'\input\settings')
-        except FileExistsError: pass
-        try:
-            os.makedirs(dirPath + r'\output')
-        except FileExistsError: pass
-        try:
-            os.makedirs(dirPath + r'\output')
-        except FileExistsError: pass
+        Operation.Initer(Operation.Bmg("dirPath"))
         os.chdir(dirPath)
         try:
             shutil.copy(dirPath + '\\input\\settings\\' + settings, dirPath + '\\workbench\\' + settings)

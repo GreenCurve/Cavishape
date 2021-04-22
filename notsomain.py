@@ -5,7 +5,7 @@ import shutil
 import operator
 from main import *
 
-option = int(input("Выберите ключ для операции из предложенного списка" + "\n" + "0 - Докинг" + "\n" + "1 - экстракция " + "\n" + "2 - шоткаты " + '\n'))
+option = int(input("Выберите ключ для операции из предложенного списка" + "\n" + "0 - Докинг" + "\n" + "1 - экстракция " + "\n" + "2 - шоткаты " + '\n' + "3 - Инициализация папок " + '\n'))
 if option == 0:
     structure = input("Ввод белка для докинга: ")
     ligand = input("Ввод лиганда для докинга: ")
@@ -45,3 +45,7 @@ elif option == 2:
         pass
     else:
         Operation.Sets(key,value)
+elif option == 3:
+    Operation.Initer(Operation.Bmg("dirPath"))
+    print('Инициализировано!')
+
