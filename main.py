@@ -136,7 +136,7 @@ class Operation(object):
                 shutil.copy(dirPath + '\\input\\ligands\\' + ligand, dirPath + '\\workbench\\' + ligand)
             except FileNotFoundError: pass
             command1 = 'build_model -set ' + settings + ' -f '+ structure + ' -olog '+ structure[:-4] + '.log -oref reference.pdb' ' -olig ligandSelf.mol -omm protein.pdb -pH 7'
-            command2 = 'leadfinder -grid -og gridmap.bin -mm ' + protein + ' -lr ' + reference+ ' ' + ('-fw ' + water if water != '' else '') + ' -xp'
+            command2 = 'leadfinder -grid -og gridmap.bin -mm ' + protein + ' -lr ' + reference+ ' ' + ('-fw ' + water if water != "water" else '') + ' -xp'
             command3 = 'leadfinder -g gridmap.bin -mm ' + protein + ' -li ' + ligand + ' -l report.log -o ligand_docked.pdb -lr ' + reference  + ' -os ligandEnergy.csv -xp'
             k = 1
             g = 1
